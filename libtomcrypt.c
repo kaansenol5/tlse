@@ -28266,6 +28266,13 @@ int rand_prime(void *N, long len, prng_state *prng, int wprng) {
 static unsigned long rng_nix(unsigned char *buf, unsigned long len,
                              void (*callback)(void)) {
  #ifdef LTC_NO_FILE
+    /* VibeOS: Call external vibe_random function instead of /dev/random */
+    extern void vibe_random(unsigned char *key, int len);
+    (void)callback;
+    if (buf && len > 0) {
+        vibe_random(buf, (int)len);
+        return len;
+    }
     return 0;
  #else
     FILE          *f;
